@@ -166,3 +166,174 @@ The router uses the supergraph schema to resolve incoming GraphQL operations fro
 ## Connecting data using entities
 
 [Connecting data using entities](https://www.apollographql.com/tutorials/voyage-part1/09-connecting-data-using-entities)
+
+### What's an entity?
+
+- An **entity** is an object type with fields split between multiple subgraphs.
+- A subgraph that defines an entity can do one or both of the following:
+  1. Reference the entity
+  2. Contribute fields to the entity
+
+### Reference the entity
+
+- Referencing an entity means using it as a return type for another field defined in the subgraph.
+
+### Contribute fields to the entity
+
+- Contributing fields to an entity means that one subgraph adds new fields to an entity that are specific to that subgraph's concerns.
+
+### How to create an entity
+
+- To convert an object into an entity in the subgraph schema, need to:
+
+  1. Define a **primary key**, is the field (or fields) of an entity that can uniquely identify an instance of that entity within a subgraph.
+
+  - The router uses primary keys to collect data from across multiple subgraphs and associate it with a single entity instance.
+  - In each of our subgraph schemas, we can define a primary key for an entity, by adding the `@key` directive after the type's name.
+  - The `@key` directive needs a property called `fields`, which we'll set to the field we want to use as the entity's primary key.
+
+  :::note
+  An entity can have more than 1 primary key.
+  :::
+
+  ```ts
+  type EntityType @key(fields: "id") {
+    id: ID!
+  }
+  ```
+
+  2. Define a **reference resolver**, which is a special resolver function for an entity when each subgraph contributes fields to an entity.
+
+  - The router uses reference resolvers to directly access the entity fields that each subgraph contributes.
+  - Every reference resolver has the name: `__resolveReference`, taking only 3 arguments:
+    1. `reference`: The entity representation object that's passed in by the router. This tells the subgraph which instance of an entity is being requested.
+    2. `context`: The object shared across all resolvers.
+    - (this is the same thing like `contextValue` as in other resolvers!)
+    3. `info`: Contains information about the operation's execution state, just like in a normal resolver.
+
+#### What's an entity representation?
+
+- An **entity representation** is an object that the router uses to represent a specific instance of an entity.
+- A representation always includes the **typename** for that entity and the `@key` field for the specific instance.
+  - The `__typename` field: This field exists on all GraphQL types automatically. It always returns the name of its containing type, as a string.
+    - e.g. `Location.__typename` returns "Location".
+  - The `@key` field: The key-value pair that a subgraph can use to identify the instance of an entity.
+- Entity Representation Example:
+
+```ts
+{
+  "__typename": "Location",
+  "id": "loc-2"
+}
+```
+
+:::tip
+
+- Analogy: You can think of an entity representation as a passport that the router uses to refer to a particular object between subgraphs.
+  - The typename field is like a passport's country of origin. It says which entity the object belongs to.
+  - And the `@key` field is like a passport's ID number, uniquely identifying this instance of that entity.
+
+:::
+
+#### Practice
+
+Where should an entity's `__resolveReference` function be defined?
+
+- In each subgraph that contributes fields to the entity.
+
+## Defining an entity
+
+[Defining an entity](https://www.apollographql.com/tutorials/voyage-part1/10-defining-an-entity)
+
+- A **stub** serves as a basic representation of a type that includes just enough information to work with that type in the subgraph.
+
+:::info
+
+- To create an entity, we can use the `@key` directive to specify which field(s) can uniquely identify an object of that type.
+- When a subgraph can't be used to resolve any non-`@key` fields of an entity, we pass `resolvable: false` to the `@key` directive definition.
+
+:::
+
+## Entities & The Query Plan
+
+[Entities & The Query Plan](https://www.apollographql.com/tutorials/voyage-part1/11-entities-and-the-query-plan)
+
+- The router begins by building a **query plan** that indicates which requests to send to which subgraphs.
+
+#### Practice
+
+Which of the following steps do NOT occur as part of how the router builds and executes its query plan?
+
+- The router makes individual requests to each subgraph and returns separate JSON objects.
+- The router makes a separate request to find out the **\_\_typename** for each type included in the query.
+
+:::info
+
+- When the router needs to query for fields from a different subgraph, it also asks for entity representations from the current subgraph it's querying. These representations will be used in the subsequent operation's `\_entities` field, set as the value for the `representations` argument.
+- The reference resolver takes each representation and returns the matching data for its requested fields.
+
+:::
+
+## Referencing Entity
+
+[Referencing Entity](https://www.apollographql.com/tutorials/voyage-part1/12-referencing-an-entity)
+
+#### Practice
+
+- When a subgraph references an entity as a return value, it provides a representation of that entity for the router to use. Which of the following are included in that representation?
+  - The entity's `__typename`
+  - The entity's `@key` fields
+- Which of the below is NOT one of the parameters accepted by the `__resolveReference` function?
+  - `args`
+
+:::info
+
+- We can reference an entity in one subgraph as the return value for a type's field.
+- Any subgraph that contributes fields to an entity needs to define a `__resolveReference` resolver function for that entity. This resolver is called when the router needs to resolve references to that entity made from within other subgraphs.
+
+:::
+
+## Contributing to an Entity
+
+[Contributing to an Entity](https://www.apollographql.com/tutorials/voyage-part1/13-contributing-to-an-entity)
+
+#### Practice
+
+- In a federated graph, we should define our subgraphs based on concerns instead of types.
+- Types containing fields that can be resolved across multiple subgraphs are called entities.
+- These types always have a key field that enables different subgraphs to associate data with the same object.
+- To keep its supergraph schema up to date, our router can poll the Uplink.
+
+#### Code Challenge
+
+You're working on a federated graph that manages book information. The `authors` subgraph defines an `Author` entity with a primary key field `id` of non-nullable type `ID`. You want to use the `Author` entity in the `books` subgraph. Define the `Author` entity below, and add a new field, `books`, which returns a non-nullable list of non-nullable type `Book`.
+
+```
+  # Write your code here!
+  type Author @key(fields: "id"){
+      id: ID!
+      books: [Book!]!
+  }
+```
+
+:::info
+
+- A subgraph that contributes fields to an entity should define the following:
+  - The entity, using the `@key` directive and its primary key fields, as well as the new fields the subgraph defines
+  - A `__resolveReference` function to know which particular entity instance a subgraph is resolving fields for. This can be taken care of by default by Apollo Server.
+- A federated architecture helps organize and illustrate the relationships between types across our graph in a way that an app developer (or multiple teams of developers!) would want to consume the data.
+- When both subgraphs use the same primary key to associate data for a type, the router coordinates data from both sources and bundles it up in a single response.
+
+:::
+
+## Putting it all together
+
+[Putting it all together](https://www.apollographql.com/tutorials/voyage-part1/14-putting-it-all-together)
+
+:::info
+
+- Clients request data from a single GraphQL server: the router.
+- The router can set CORS rules to specify which websites can talk to it.
+- We can set up these rules (and other configurations) through the router's config file.
+
+:::
