@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-tutorial/Production" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.5.2">
+<title data-rh="true">Federation in Production | Kobe Tran | Apollo GraphQL Notes</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://devkobetran.github.io/apollo-graphql-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://devkobetran.github.io/apollo-graphql-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://devkobetran.github.io/apollo-graphql-notes/docs/tutorial/Production"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Federation in Production | Kobe Tran | Apollo GraphQL Notes"><meta data-rh="true" name="description" content="Airlock in production"><meta data-rh="true" property="og:description" content="Airlock in production"><link data-rh="true" rel="icon" href="/apollo-graphql-notes/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://devkobetran.github.io/apollo-graphql-notes/docs/tutorial/Production"><link data-rh="true" rel="alternate" href="https://devkobetran.github.io/apollo-graphql-notes/docs/tutorial/Production" hreflang="en"><link data-rh="true" rel="alternate" href="https://devkobetran.github.io/apollo-graphql-notes/docs/tutorial/Production" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/apollo-graphql-notes/blog/rss.xml" title="Kobe Tran | Apollo GraphQL Notes RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/apollo-graphql-notes/blog/atom.xml" title="Kobe Tran | Apollo GraphQL Notes Atom Feed"><link rel="stylesheet" href="/apollo-graphql-notes/assets/css/styles.993a030a.css">
+<script src="/apollo-graphql-notes/assets/js/runtime~main.7557009f.js" defer="defer"></script>
+<script src="/apollo-graphql-notes/assets/js/main.23b8588b.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/apollo-graphql-notes/"><div class="navbar__logo"><img src="/apollo-graphql-notes/img/logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/apollo-graphql-notes/img/logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Kobe Tran Apollo GraphQL Notes</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/apollo-graphql-notes/docs/intro">Tutorial</a><a class="navbar__item navbar__link" href="/apollo-graphql-notes/blog">Blog</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/devkobetran/apollo-graphql-notes" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/apollo-graphql-notes/docs/intro">Introduction</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/apollo-graphql-notes/docs/environment-setup">Environment Setup</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/apollo-graphql-notes/docs/reference-docs">Reference Docs</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" href="/apollo-graphql-notes/docs/category/tutorial">Tutorial</a><button aria-label="Collapse sidebar category &#x27;Tutorial&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Basics">Basics</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Resolvers">Resolvers</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Arguments">Arguments</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Mutations">Mutations</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Federation">Federation from Day One</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Monolith">Federating the Monolith</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/apollo-graphql-notes/docs/tutorial/Production">Federation in Production</a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/apollo-graphql-notes/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/apollo-graphql-notes/docs/category/tutorial"><span itemprop="name">Tutorial</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Federation in Production</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Federation in Production</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="airlock-in-production">Airlock in production<a href="#airlock-in-production" class="hash-link" aria-label="Direct link to Airlock in production" title="Direct link to Airlock in production">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/01-airlock-in-production" target="_blank" rel="noopener noreferrer">Airlock in production</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice">Practice<a href="#practice" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li><strong>Reviewing the managed federation process</strong>:<!-- -->
+<ul>
+<li>A supergraph consists of a router and one or more subgraphs.</li>
+<li>With managed federation, each subgraph schema is published to the schema registry.</li>
+<li>This triggers a process called composition, which produces a supergraph schema provided to Apollo Uplink.</li>
+<li>The router fetches this document from Uplink and starts using it to respond to client requests.</li>
+</ul>
+</li>
+<li><strong>Environments</strong>:<!-- -->
+<ul>
+<li>Airlock uses three distinct environments.</li>
+<li>Code changes start in a <strong>local development environment</strong>, on a developer&#x27;s own computer.</li>
+<li>The <strong>staging environment</strong> is used to test and validate changes before these changes are deployed to the <strong>production</strong> environment, where users can interact with the app in the real world.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="variants-in-a-supergraph">Variants in a supergraph<a href="#variants-in-a-supergraph" class="hash-link" aria-label="Direct link to Variants in a supergraph" title="Direct link to Variants in a supergraph">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/02-variants-in-a-supergraph" target="_blank" rel="noopener noreferrer">Variants in a supergraph</a></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="what-are-graph-variants">What are graph variants?<a href="#what-are-graph-variants" class="hash-link" aria-label="Direct link to What are graph variants?" title="Direct link to What are graph variants?">​</a></h3>
+<ul>
+<li>A <strong>graph variant</strong> is an instance of a graph that runs in a specific environment (such as staging or production)<!-- -->
+<ul>
+<li>In GraphOS, each variant of a graph has its own schema, metrics, change history, and operation history.</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="variants-in-the-supergraph">Variants in the supergraph<a href="#variants-in-the-supergraph" class="hash-link" aria-label="Direct link to Variants in the supergraph" title="Direct link to Variants in the supergraph">​</a></h3>
+<ul>
+<li>We have the option to choose which variant to publish a subgraph schema to.</li>
+<li>If we don&#x27;t specify a variant name, our changes are published by default to the <code>current</code> variant.</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-1">Practice<a href="#practice-1" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of the following statements are true about graph variants in GraphOS?<!-- -->
+<ul>
+<li>Both federated and non-federated graphs can have graph variants</li>
+<li>Each graph variant has its own schema, metrics, and change history</li>
+<li>A graph variant represents an instance of a graph running in a specific environment.</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>A graph variant represents an instance of a graph that runs in a specific environment.</li>
+<li>The managed federation process stays the same as before, with the added option of choosing which variant to publish a schema to.</li>
+<li>Graph variants are available for both federated and non-federated graphs.</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="publishing-to-a-graph-variant">Publishing to a graph variant<a href="#publishing-to-a-graph-variant" class="hash-link" aria-label="Direct link to Publishing to a graph variant" title="Direct link to Publishing to a graph variant">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/03-publishing-to-a-graph-variant" target="_blank" rel="noopener noreferrer">Publishing to a graph variant</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-2">Practice<a href="#practice-2" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of these is the correct way to publish a subgraph schema to a specific variant?<!-- -->
+<ul>
+<li>By using the <code>rover subgraph publish</code> command and specifying the variant name after the <code>@</code> symbol in the graph ref.</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="schema-checks-in-a-supergraph">Schema checks in a supergraph<a href="#schema-checks-in-a-supergraph" class="hash-link" aria-label="Direct link to Schema checks in a supergraph" title="Direct link to Schema checks in a supergraph">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/04-schema-checks-in-a-supergraph" target="_blank" rel="noopener noreferrer">Schema checks in a supergraph</a></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="what-are-schema-checks">What are schema checks?<a href="#what-are-schema-checks" class="hash-link" aria-label="Direct link to What are schema checks?" title="Direct link to What are schema checks?">​</a></h3>
+<ul>
+<li><strong>Schema checks</strong> are a set of predefined tests that help identify potential failures caused by schema updates.<!-- -->
+<ul>
+<li>They check for issues like incompatibilities between subgraph schemas or breaking existing client operations.</li>
+<li>With schema checks, we can ensure that our schema changes won&#x27;t cause issues when we deploy to production.</li>
+</ul>
+</li>
+<li>There are three types of schema checks:<!-- -->
+<ol>
+<li><strong>Build checks</strong>: validate that a subgraph&#x27;s schema changes can still compose successfully with other subgraph schemas in the supergraph.</li>
+</ol>
+<ul>
+<li>For example, if a new type is added to one subgraph, a build check determines whether that addition is compatible with the rest of the subgraphs in the supergraph. If it isn&#x27;t, we need to investigate the error and fix it.</li>
+</ul>
+<ol start="2">
+<li><strong>Operation checks</strong>: validate that a schema&#x27;s changes won&#x27;t break any operations that existing clients send to the graph.</li>
+</ol>
+<ul>
+<li>For example, let&#x27;s say a web client regularly sends a GraphQL query to retrieve data for its homepage. If a schema change involves adding a required argument to a field in that query, it might break that client&#x27;s existing operation if it doesn&#x27;t include that argument! An operation check helps us guard against this potential failure, listing out the affected operations and allowing the team to address them.</li>
+</ul>
+<ol start="3">
+<li><strong>Linter checks</strong>: analyze your proposed schema changes for violations of formatting rules and other GraphQL best practices.</li>
+</ol>
+<ul>
+<li>Some common schema conventions include: writing field names in <code>camelCase</code>, type names in <code>PascalCase</code>, and enums in <code>SCREAMING_SNAKE_CASE</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="launch-process">Launch process<a href="#launch-process" class="hash-link" aria-label="Direct link to Launch process" title="Direct link to Launch process">​</a></h3>
+<ul>
+<li>A launch represents the complete process of making schema updates to any variant of a graph.</li>
+<li>A launch starts with GraphOS attempting to compose the supergraph.<!-- -->
+<ul>
+<li>If it fails, we&#x27;ll see an error and the process stops there.</li>
+<li>Otherwise, a supergraph schema is produced. The supergraph schema is provided to Uplink and the GraphOS Router will fetch the latest schema.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-3">Practice<a href="#practice-3" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li><strong>Types of schema checks</strong>:<!-- -->
+<ul>
+<li>Schema checks identify potential failures from proposed schema changes.</li>
+<li>Linter checks validate that a schema follows GraphQL conventions.</li>
+<li>Operation checks validate that existing client operations won&#x27;t break.</li>
+<li>Build checks validate that the supergraph schema will still compose successfully.</li>
+</ul>
+</li>
+<li>Which of the following statements about launches in GraphOS are true?<!-- -->
+<ul>
+<li>A launch starts with GraphOS attempting to compose the supergraph</li>
+<li>A launch represents the complete process of making schema updates to any variant of a graph.</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>Schema checks help identify potential failures caused by schema updates before they can cause issues in production.</li>
+<li>Build checks validate that a subgraph&#x27;s schema changes can still compose successfully with other subgraph schemas.</li>
+<li>Operation checks validate that a schema&#x27;s changes won&#x27;t break any operations that existing clients are sending to the graph.</li>
+<li>Linter checks validate that a schema follows formatting rules and conventions.</li>
+<li>To run a schema check, we use the <code>rover subgraph check</code> command.</li>
+<li>We can inspect the results of a schema check through the terminal or in the Studio Checks page.</li>
+<li>A launch represents the complete process of making schema updates to any variant of a graph. It&#x27;s triggered by a subgraph being published to the schema registry.</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="local-schema-checks">Local schema checks<a href="#local-schema-checks" class="hash-link" aria-label="Direct link to Local schema checks" title="Direct link to Local schema checks">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/05-local-schema-checks" target="_blank" rel="noopener noreferrer">Local schema checks</a></p>
+<ul>
+<li><strong>Value types</strong> are types that are reused and shared across multiple subgraphs.<!-- -->
+<ul>
+<li>These types can be object types, enums, unions, or interfaces.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-4">Practice<a href="#practice-4" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of the following information does the <code>rover subgraph check</code> command need?<!-- -->
+<ul>
+<li>The graph ref of the variant to check against</li>
+<li>The name of the subgraph</li>
+<li>The file path to the subgraph schema</li>
+</ul>
+</li>
+<li>Which types of schema checks does the r<code>over subgraph check</code> command run on a non-federated graph?<!-- -->
+<ul>
+<li>Operation checks</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>The <code>@shareable</code> directive enables multiple subgraphs to resolve a particular object field (or set of object fields).</p></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="schema-checks-in-ci">Schema checks in CI<a href="#schema-checks-in-ci" class="hash-link" aria-label="Direct link to Schema checks in CI" title="Direct link to Schema checks in CI">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/06-schema-checks-in-ci" target="_blank" rel="noopener noreferrer">Schema checks in CI</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-5">Practice<a href="#practice-5" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of the following are benefits of adding schema checks to the CI pipeline?<!-- -->
+<ul>
+<li>Schema checks can be automated, reducing human error when forgetting to run checks locally.</li>
+<li>Schema checks catch potential breaking changes before they make it into your codebase.</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>Schema checks are an essential part of a robust CI/CD pipeline.</li>
+<li>Adding schema checks to your pipeline lets you automatically run them every time someone wants to make changes to your codebase, which helps you gain confidence that new changes won&#x27;t break things.</li>
+<li>We can use the same <code>rover subgraph check</code> command that we used locally in our CI automation to perform schema checks.</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="publishing--deployment">Publishing &amp; Deployment<a href="#publishing--deployment" class="hash-link" aria-label="Direct link to Publishing &amp; Deployment" title="Direct link to Publishing &amp; Deployment">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/07-publishing-and-deployment" target="_blank" rel="noopener noreferrer">Publishing &amp; Deployment</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-6">Practice<a href="#practice-6" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of the following events triggers a launch in GraphOS?<!-- -->
+<ul>
+<li>When a subgraph schema is published to the registry</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>We can automate publishing a subgraph to the registry inside our CD pipeline using the <code>rover subgraph publish</code> command.</li>
+<li>Publishing a subgraph schema to any variant in the registry triggers a launch. We can view the launch sequence in the Launches page of Studio.</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="build-check-errors">Build check errors<a href="#build-check-errors" class="hash-link" aria-label="Direct link to Build check errors" title="Direct link to Build check errors">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/08-composition-check-errors" target="_blank" rel="noopener noreferrer">Build check errors</a></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="the-inaccessible-directive">The <code>@inaccessible</code> directive<a href="#the-inaccessible-directive" class="hash-link" aria-label="Direct link to the-inaccessible-directive" title="Direct link to the-inaccessible-directive">​</a></h3>
+<ul>
+<li>The <code>@inaccessible</code> directive is applied to a field in a subgraph schema.<!-- -->
+<ul>
+<li>Whenever it&#x27;s present on a field, composition omits that field from the router&#x27;s API schema.</li>
+<li>This means that clients can&#x27;t include the field in operations.</li>
+<li>This helps us incrementally add a field to multiple subgraphs without breaking composition.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-7">Practice<a href="#practice-7" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>Which of the following statements about build checks are true?<!-- -->
+<ul>
+<li>Build checks verify whether changes made to a subgraph will successfully compose with other subgraphs.</li>
+<li>Build checks can be integrated into CI/CD workflow.</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>We use the <code>rover subgraph check</code> command to perform schema checks locally.</li>
+<li>To add a new shared field to a value type, we should first apply the <code>@inaccessible</code> directive to the field.<!-- -->
+<ul>
+<li>Then, we can incrementally add the new field to each subgraph that defines the value type.</li>
+<li>Finally, we can remove the <code>@inaccessible</code> directive and the field will be officially part of the supergraph schema.</li>
+</ul>
+</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="operation-check-errors">Operation check errors<a href="#operation-check-errors" class="hash-link" aria-label="Direct link to Operation check errors" title="Direct link to Operation check errors">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/09-operation-check-errors" target="_blank" rel="noopener noreferrer">Operation check errors</a></p>
+<ul>
+<li><strong>Operation checks</strong> compare schema changes against client operations made in the past, to ensure that we&#x27;re not introducing any breaking changes for clients consuming data from our graph.<!-- -->
+<ul>
+<li>Operation checks assess whether the proposed changes to the subgraph will affect any GraphQL operations that have been executed against the schema within a certain timeframe.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-8">Practice<a href="#practice-8" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>In which of the following scenarios might you want to override an operation check failure?<!-- -->
+<ul>
+<li>You know the flagged operation is safe because downstream clients have accounted for the change</li>
+<li>The flagged operation is used only by clients you no longer actively support.</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>Operation checks consider historical operations against the schema to ensure updates to a subgraph do not introduce breaking changes for clients.</li>
+<li>Errors that occur during an operation check can be overridden in Studio.</li>
+<li>Operation check overrides can be set on an operation-by-operation basis, enabling you to mark specific changes as approved or ignore an operation entirely.</li>
+</ul></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="observability-with-graphos-studio">Observability with GraphOS Studio<a href="#observability-with-graphos-studio" class="hash-link" aria-label="Direct link to Observability with GraphOS Studio" title="Direct link to Observability with GraphOS Studio">​</a></h2>
+<p><a href="https://www.apollographql.com/tutorials/voyage-part3/10-observability-with-apollo-studio" target="_blank" rel="noopener noreferrer">Observability with GraphOS Studio</a></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="field-usage">Field usage<a href="#field-usage" class="hash-link" aria-label="Direct link to Field usage" title="Direct link to Field usage">​</a></h3>
+<ul>
+<li>Field usage metrics fall under two categories:<!-- -->
+<ul>
+<li><strong>Field requests</strong> represent how many operations were sent by clients over a given time period that included the field.</li>
+<li><strong>Field executions</strong> represent how many times your servers have executed the resolver for the field over a given time period.</li>
+</ul>
+</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="practice-9">Practice<a href="#practice-9" class="hash-link" aria-label="Direct link to Practice" title="Direct link to Practice">​</a></h4>
+<ul>
+<li>If you needed to know how many times a field has been resolved, which metric would you use?<!-- -->
+<ul>
+<li>Field executions</li>
+</ul>
+</li>
+<li>If you needed to know how many operations have included a field, which metric would you use?<!-- -->
+<ul>
+<li>Field requests</li>
+</ul>
+</li>
+<li>Which of the following operation metrics does GraphOS provide?<!-- -->
+<ul>
+<li>Error Percentages</li>
+<li>Request rates</li>
+<li>Request latencies</li>
+<li>The top slowest operations</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><ul>
+<li>Operation metrics provide an overview of operation request rates, service time, and error percentages within a given time period or for a specific operation.</li>
+<li>Field metrics include field requests (how many operations were sent that included that field) and field executions (how many times the resolver for the field has been executed).</li>
+</ul></div></div></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/devkobetran/apollo-graphql-notes/docs/tutorial/Production.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/apollo-graphql-notes/docs/tutorial/Monolith"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Federating the Monolith</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#airlock-in-production" class="table-of-contents__link toc-highlight">Airlock in production</a></li><li><a href="#variants-in-a-supergraph" class="table-of-contents__link toc-highlight">Variants in a supergraph</a><ul><li><a href="#what-are-graph-variants" class="table-of-contents__link toc-highlight">What are graph variants?</a></li><li><a href="#variants-in-the-supergraph" class="table-of-contents__link toc-highlight">Variants in the supergraph</a></li></ul></li><li><a href="#publishing-to-a-graph-variant" class="table-of-contents__link toc-highlight">Publishing to a graph variant</a></li><li><a href="#schema-checks-in-a-supergraph" class="table-of-contents__link toc-highlight">Schema checks in a supergraph</a><ul><li><a href="#what-are-schema-checks" class="table-of-contents__link toc-highlight">What are schema checks?</a></li><li><a href="#launch-process" class="table-of-contents__link toc-highlight">Launch process</a></li></ul></li><li><a href="#local-schema-checks" class="table-of-contents__link toc-highlight">Local schema checks</a></li><li><a href="#schema-checks-in-ci" class="table-of-contents__link toc-highlight">Schema checks in CI</a></li><li><a href="#publishing--deployment" class="table-of-contents__link toc-highlight">Publishing &amp; Deployment</a></li><li><a href="#build-check-errors" class="table-of-contents__link toc-highlight">Build check errors</a><ul><li><a href="#the-inaccessible-directive" class="table-of-contents__link toc-highlight">The <code>@inaccessible</code> directive</a></li></ul></li><li><a href="#operation-check-errors" class="table-of-contents__link toc-highlight">Operation check errors</a></li><li><a href="#observability-with-graphos-studio" class="table-of-contents__link toc-highlight">Observability with GraphOS Studio</a><ul><li><a href="#field-usage" class="table-of-contents__link toc-highlight">Field usage</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/apollo-graphql-notes/docs/intro">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/apollo-graphql-notes/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/devkobetran/apollo-graphql-notes" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 Kobe Tran Apollo GraphQL Notes. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
